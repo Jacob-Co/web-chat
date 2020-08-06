@@ -1,5 +1,6 @@
 // local nodes
 require('./config/config');
+const {generateMessage} = require('./utils/message');
 
 // 3rd party nodes
 const express = require('express'); // express uses a builtin node module to create its server
@@ -39,16 +40,9 @@ io.on('connection', (socket) => {
     console.log('CreateEmail', newEmail);
   })
 
-  socket.emit('welcomeMessage', {
-    from: 'Admin',
-    text: 'Welcome to the chat room'
-  })
+  socket.emit('welcomeMessage', generateMessage('Admin', 'Welcome to the chat app'));
 
-  socket.broadcast.emit('newUser', {
-    from: 'Admin',
-    text: 'A new user has joined the char room',
-    createdAt: new Date().getTime()
-  })
+  socket.broadcast.emit('newUser', generateMessage('Admin', 'A new user has joined'));
 
   socket.on('createMessage', (newMessage) => {
     console.log(newMessage);
@@ -57,11 +51,7 @@ io.on('connection', (socket) => {
     //   text: newMessage.text,
     //   createdAt: new Date().getTime()
     // })
-    socket.broadcast.emit('newMessage', {// everyone receives the message except your tab
-      from: newMessage.from,
-      text: newMessage.text,
-      createAt: new Date().getTime()
-    });
+    socket.broadcast.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
   });
 
   socket.on('disconnect', () => {
