@@ -40,21 +40,23 @@ io.on('connection', (socket) => {
     console.log('CreateEmail', newEmail);
   })
 
-  socket.emit('welcomeMessage', generateMessage('Admin', 'Welcome to the chat app'));
+  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
 
-  socket.broadcast.emit('newUser', generateMessage('Admin', 'A new user has joined'));
+  socket.broadcast.emit('newMessage', generateMessage('Admin', 'A new user has joined'));
 
-  socket.on('createMessage', (newMessage) => {
-    console.log(newMessage);
+  socket.on('createMessage', (newMessage, callback) => {
+    console.log('createMessage', newMessage);
     // io.emit('newMessage', { //emits to everyone
     //   from: newMessage.from,
     //   text: newMessage.text,
     //   createdAt: new Date().getTime()
     // })
-    socket.broadcast.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
+    io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
+    callback('This is from the server');
   });
 
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });
 });
+
