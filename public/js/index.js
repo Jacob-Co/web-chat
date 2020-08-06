@@ -9,6 +9,14 @@ socket.on('connect', function() {
   // });
 });
 
+socket.on('newUser', function(newUserMessage) {
+  console.log(newUserMessage.from + ':\n' +newUserMessage.text);
+});
+
+socket.on('welcomeMessage', function(welcomeMessage) {
+  console.log(welcomeMessage.from + ':\n' + welcomeMessage.text);
+});
+
 socket.on('disconnect', function() {
   console.log('Server is disconnected');
 });

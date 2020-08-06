@@ -39,13 +39,29 @@ io.on('connection', (socket) => {
     console.log('CreateEmail', newEmail);
   })
 
+  socket.emit('welcomeMessage', {
+    from: 'Admin',
+    text: 'Welcome to the chat room'
+  })
+
+  socket.broadcast.emit('newUser', {
+    from: 'Admin',
+    text: 'A new user has joined the char room',
+    createdAt: new Date().getTime()
+  })
+
   socket.on('createMessage', (newMessage) => {
     console.log(newMessage);
-    io.emit('newMessage', { //emits to everyone
+    // io.emit('newMessage', { //emits to everyone
+    //   from: newMessage.from,
+    //   text: newMessage.text,
+    //   createdAt: new Date().getTime()
+    // })
+    socket.broadcast.emit('newMessage', {// everyone receives the message except your tab
       from: newMessage.from,
       text: newMessage.text,
-      createdAt: new Date().getTime()
-    })
+      createAt: new Date().getTime()
+    });
   });
 
   socket.on('disconnect', () => {
