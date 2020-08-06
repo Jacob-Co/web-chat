@@ -1,6 +1,6 @@
 // local nodes
 require('./config/config');
-const {generateMessage} = require('./utils/message');
+const {generateMessage, generateLocationMessage} = require('./utils/message');
 
 // 3rd party nodes
 const express = require('express'); // express uses a builtin node module to create its server
@@ -46,11 +46,6 @@ io.on('connection', (socket) => {
 
   socket.on('createMessage', (newMessage, callback) => {
     console.log('createMessage', newMessage);
-    // io.emit('newMessage', { //emits to everyone
-    //   from: newMessage.from,
-    //   text: newMessage.text,
-    //   createdAt: new Date().getTime()
-    // })
     io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
     callback('This is from the server');
   });
@@ -58,5 +53,10 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });
+
+  socket.on('createLocationMessage', (coords) => {
+    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+  });
 });
+
 
