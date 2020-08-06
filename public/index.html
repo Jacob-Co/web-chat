@@ -8,5 +8,15 @@
 <body>
   <p>Wassup</p>
   <p>Hey</p>
+  <script src="socket.io/socket.io.js"></script>
+  <script>
+    let socket = io(); //creates our connection to the server (send and receive);
+    socket.on('connect', () => {
+      console.log('Server is connected'); // prints whenever the client connects to a server
+    })
+    socket.on('disconnect', () => {
+      console.log('Server is disconnected');
+    })
+  </script>
 </body>
 </html>
