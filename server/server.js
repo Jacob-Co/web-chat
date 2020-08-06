@@ -39,14 +39,13 @@ io.on('connection', (socket) => {
     console.log('CreateEmail', newEmail);
   })
 
-  socket.emit('newMessage', {
-    from: 'Someone',
-    text: 'Ey',
-    createdAt: new Date().toLocaleTimeString
-  })
-
   socket.on('createMessage', (newMessage) => {
     console.log(newMessage);
+    io.emit('newMessage', { //emits to everyone
+      from: newMessage.from,
+      text: newMessage.text,
+      createdAt: new Date().getTime()
+    })
   });
 
   socket.on('disconnect', () => {

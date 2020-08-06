@@ -4,7 +4,7 @@ socket.on('connect', function() {
   console.log('Server is connected'); // prints whenever the client connects to a server
 
   socket.emit('createMessage', {
-    fromt: 'jacob',
+    from: 'Jacob',
     text: 'Wassup'
   });
 });
@@ -14,5 +14,5 @@ socket.on('disconnect', function() {
 });
 
 socket.on('newMessage', function(message) {
-  console.log(`New message received from ${message.from}: ${message.text}`);
+  console.log(`New message received from ${message.from}: ${message.text}`, message);
 });
