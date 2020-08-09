@@ -91,3 +91,13 @@ locationButton.on('click', function() {
     alert('Unable to fetch location.');
   });
 });
+
+socket.on('updateUserList', function(usersArray) {
+  let ol = jQuery('<ol></ol');
+
+  usersArray.forEach(function(user) {
+    ol.append(jQuery('<li></li>').text(user));
+  });
+
+  jQuery('#users').html(ol);
+})
