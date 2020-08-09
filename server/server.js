@@ -39,15 +39,19 @@ let users = new Users();
 // event listener
 // when you run this hello is conosled log after connecting
 io.on('connection', (socket) => {
-  console.log('New User connected');
+  console.log('A new user is trying to connect');
 
   socket.on('createEmail', (newEmail) => {
     console.log('CreateEmail', newEmail);
   })
 
   socket.on('createMessage', (newMessage, callback) => {
-    console.log('createMessage', newMessage);
-    io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
+    let user = users.getUser(socket.id);
+
+    if (user && isRealString(newMessage.text)) {
+      io.to(user.room).emit('newMessage', generateMessage(user.name, newMessage.text));
+    }
+
     callback('This is from the server');
   });
 
@@ -57,15 +61,20 @@ io.on('connection', (socket) => {
     if(user) {
       io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left`));
       io.to(user.room).emit('updateUserList', users.getUserList(user.room));
+      console.log(`${user.name} disconnected`);
     }
   });
 
   socket.on('createLocationMessage', (coords) => {
-    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+    let user = users.getUser(socket.id);
+    if(user) {
+      io.to(user.room)
+        .emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
+    }
   });
 
   socket.on('join', (params, callback) => {
-    if (!(isRealString(params.name) || isRealString(params.room))) {
+    if (!isRealString(params.name) || !isRealString(params.room)) {
       callback('Name and room name are required.')
     } else {
       socket.join(params.room);
@@ -76,6 +85,7 @@ io.on('connection', (socket) => {
       socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
       socket.broadcast.to(params.room)
         .emit('newMessage', generateMessage('Admin', `${params.name} has joined`));
+      console.log(`User ${params.name} joined room ${params.room}`)
       callback();
     }
   })

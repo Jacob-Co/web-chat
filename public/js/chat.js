@@ -1,4 +1,3 @@
-
 let socket = io(); //creates our connection to the server (send and receive);
 
 function scrollToBottom() {
@@ -25,7 +24,7 @@ socket.on('connect', function() {
       alert(err);
       window.location.href = '/';
     } else {
-      console.log('No error');
+      console.log('No error, joined romm succesfully');
     }
   });
 });
@@ -65,7 +64,6 @@ jQuery('#message-form').on('submit', function(e) {
   e.preventDefault();
   let messageTextbox = jQuery('[name=message]')
   socket.emit('createMessage', {
-    from: 'User',
     text: messageTextbox.val()
   }, function() {
     messageTextbox.val('');
@@ -97,6 +95,7 @@ socket.on('updateUserList', function(usersArray) {
 
   usersArray.forEach(function(user) {
     ol.append(jQuery('<li></li>').text(user));
+    // ol.append(jQuery(`<li>${user}</li>`));
   });
 
   jQuery('#users').html(ol);
